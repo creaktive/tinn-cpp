@@ -18,9 +18,9 @@ class Tinn {
       o.resize(nops);
       if (data.size() != nb + nw) {
         for (size_t i = 0; i < nb; i++)
-          b[i] = frand() - 0.5;
+          b[i] = frand();
         for (size_t i = 0; i < nw; i++)
-          w[i] = frand() - 0.5;
+          w[i] = frand();
       } else {
         for (size_t i = 0; i < nb; i++)
           b[i] = data[i];
@@ -113,9 +113,9 @@ class Tinn {
       return p * (1.0 - p);
     }
 
-    // Returns floating point random from 0.0 - 1.0.
+    // Returns random from -0.5 to 0.5.
     double frand() {
-      static std::uniform_real_distribution<double> dist(0.0, 1.0);
+      static std::uniform_real_distribution<double> dist(-0.5, 0.5);
       return dist(rng);
     }
 

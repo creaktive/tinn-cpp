@@ -9,15 +9,35 @@ class Tinn {
   public:
     std::default_random_engine rng;
 
-    Tinn(const size_t _nips, const size_t _nhid, const size_t _nops)
+    Tinn(const size_t _nips, const size_t _nhid, const size_t _nops, const std::vector<double> data = {})
       : nips(_nips), nhid(_nhid), nops(_nops) {
+      nb = 2;
       nw = nhid * (nips + nops);
       w.resize(nw);
-      x.resize(nw + nhid * nips);
       b.resize(nb);
       h.resize(nhid);
       o.resize(nops);
-      wbrand();
+      if (data.size() != nb + nw) {
+        for (size_t i = 0; i < nb; i++)
+          b[i] = frand() - 0.5;
+        for (size_t i = 0; i < nw; i++)
+          w[i] = frand() - 0.5;
+      } else {
+        for (size_t i = 0; i < nb; i++)
+          b[i] = data[i];
+        for (size_t i = 0; i < nw; i++)
+          w[i] = data[nb + i];
+      }
+      x = w.data() + nhid * nips;
+    }
+
+    std::vector<double> save() {
+      std::vector<double> data(nb + nw);
+      for (size_t i = 0; i < nb; i++)
+        data[i] = b[i];
+      for (size_t i = 0; i < nw; i++)
+        data[nb + i] = w[i];
+      return data;
     }
 
     // Returns an output prediction given an input.
@@ -45,7 +65,7 @@ class Tinn {
     // All the weights.
     std::vector<double> w;
     // Hidden to output layer weights.
-    std::vector<double> x;
+    double *x;
     // Biases.
     std::vector<double> b;
     // Hidden layer.
@@ -53,7 +73,7 @@ class Tinn {
     // Output layer.
     std::vector<double> o;
     // Number of biases - always two - Tinn only supports a single hidden layer.
-    const size_t nb = 2;
+    size_t nb;
     // Number of weights.
     size_t nw;
     // Number of inputs.
@@ -112,13 +132,6 @@ class Tinn {
         for (size_t j = 0; j < nips; j++)
           w[i * nips + j] -= rate * sum * pdact(h[i]) * in[j];
       }
-    }
-
-    void wbrand() {
-      for (size_t i = 0; i < nw; i++)
-        w[i] = frand() - 0.5;
-      for (size_t i = 0; i < nb; i++)
-        b[i] = frand() - 0.5;
     }
 
     void fprop(const std::vector<double> in) {
@@ -197,6 +210,8 @@ int main() {
     std::cout << std::endl;
     rate *= anneal;
   }
+  auto model = tinn.save();
+  tinn = Tinn(nips, nhid, nops, model);
   auto pd = tinn.predict(data[0].in);
   tinn.print(data[0].tg);
   tinn.print(pd);

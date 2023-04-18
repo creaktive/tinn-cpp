@@ -10,5 +10,8 @@
 		"Tinn",
 		"toterr",
 		"wbrand"
-	]
+	],
+	"files.associations": {
+		"vector": "cpp"
+	}
 }

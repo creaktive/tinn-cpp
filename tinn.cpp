@@ -144,7 +144,6 @@ struct Data {
   std::vector<double> tg;
 };
 
-std::vector<Data> build(const std::string filename, const size_t nips, const size_t nops);
 std::vector<Data> build(const std::string filename, const size_t nips, const size_t nops) {
   std::ifstream input(filename);
   if (!input.is_open())
@@ -155,15 +154,12 @@ std::vector<Data> build(const std::string filename, const size_t nips, const siz
     std::stringstream stream;
     stream << line;
     Data row;
-    size_t col = 0;
     double val;
-    while (stream >> val) {
+    for (size_t col = 0; stream >> val; col++)
       if (col < nips)
         row.in.push_back(val);
       else if (col < nips + nops)
         row.tg.push_back(val);
-      col++;
-    }
     if (row.in.size() != nips || row.tg.size() != nops)
       throw std::runtime_error("malformed input");
     data.push_back(row);

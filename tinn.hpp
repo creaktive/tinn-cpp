@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <random>
 #include <sstream>
 #include <vector>
@@ -31,7 +30,7 @@ class Tinn {
       x = w.data() + nhid * nips;
     }
 
-    std::vector<double> save() {
+    const std::vector<double> save() {
       std::vector<double> data(nb + nw);
       for (size_t i = 0; i < nb; i++)
         data[i] = b[i];
@@ -41,7 +40,7 @@ class Tinn {
     }
 
     // Returns an output prediction given an input.
-    std::vector<double> predict(const std::vector<double> in) {
+    const std::vector<double> predict(const std::vector<double> in) {
       fprop(in);
       return o;
     }
@@ -54,11 +53,14 @@ class Tinn {
     }
 
     // Prints an array of floats. Useful for printing predictions.
-    void print(const std::vector<double> arr) {
+    const std::string dump_vector(const std::vector<double> data, const std::streamsize prec = 6, const char sep = ' ') {
       std::stringstream stream;
-      for (size_t i = 0; i < arr.size(); i++)
-        stream << std::fixed << arr[i] << ' ';
-      std::cout << stream.str() << std::endl;
+      stream.setf(std::ios::fixed);
+      stream.precision(prec);
+      size_t end = data.size() - 1;
+      for (size_t i = 0; i <= end; i++)
+        stream << data[i] << (i == end ? '\n' : sep);
+      return stream.str();
     }
 
   private:

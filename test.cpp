@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 #include "tinn.hpp"
 
@@ -10,7 +11,7 @@ struct Data {
   vector<double> tg;
 };
 
-vector<Data> build(const string filename, const size_t nips, const size_t nops) {
+const vector<Data> build(const string filename, const size_t nips, const size_t nops) {
   ifstream input(filename);
   if (!input.is_open())
     throw runtime_error("can't open " + filename);
@@ -63,10 +64,21 @@ int main() {
     cout << endl;
     rate *= anneal;
   }
+  // This is how you save the neural network.
   auto model = tinn.save();
+  // This is how you load the neural network.
   tinn = Tinn(nips, nhid, nops, model);
-  auto pd = tinn.predict(data[0].in);
-  tinn.print(data[0].tg);
-  tinn.print(pd);
+  // Now we do a prediction with the neural network we loaded from disk.
+  // Ideally, we would also load a testing set to make the prediction with,
+  // but for the sake of brevity here we just reuse the training set from earlier.
+  // One data set is picked at random (zero index of input and target arrays is enough
+  // as they were both shuffled earlier).
+  auto in = data[0].in;
+  auto tg = data[0].tg;
+  auto pd = tinn.predict(in);
+  // Prints target.
+  cout << tinn.dump_vector(tg);
+  // Prints prediction.
+  cout << tinn.dump_vector(pd);
   return 0;
 }

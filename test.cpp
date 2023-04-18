@@ -1,20 +1,23 @@
 #include <algorithm>
 #include <fstream>
+
 #include "tinn.hpp"
 
+using namespace std;
+
 struct Data {
-  std::vector<double> in;
-  std::vector<double> tg;
+  vector<double> in;
+  vector<double> tg;
 };
 
-std::vector<Data> build(const std::string filename, const size_t nips, const size_t nops) {
-  std::ifstream input(filename);
+vector<Data> build(const string filename, const size_t nips, const size_t nops) {
+  ifstream input(filename);
   if (!input.is_open())
-    throw std::runtime_error("can't open " + filename);
-  std::vector<Data> data;
-  std::string line;
+    throw runtime_error("can't open " + filename);
+  vector<Data> data;
+  string line;
   while (getline(input, line)) {
-    std::stringstream stream;
+    stringstream stream;
     stream << line;
     Data row;
     double val;
@@ -24,7 +27,7 @@ std::vector<Data> build(const std::string filename, const size_t nips, const siz
       else if (col < nips + nops)
         row.tg.push_back(val);
     if (row.in.size() != nips || row.tg.size() != nops)
-      throw std::runtime_error("malformed input");
+      throw runtime_error("malformed input");
     data.push_back(row);
   }
   input.close();
@@ -50,14 +53,14 @@ int main() {
   // Train, baby, train.
   auto tinn = Tinn(nips, nhid, nops);
   for (size_t i = 0; i < iterations; i++) {
-    std::shuffle(data.begin(), data.end(), tinn.rng);
+    shuffle(data.begin(), data.end(), tinn.rng);
     double error = 0.0;
     for (size_t j = 0; j < data.size(); j++)
       error += tinn.train(data[j].in, data[j].tg, rate);
-    std::cout << "error " << std::fixed << error / data.size();
-    std::cout << " :: ";
-    std::cout << "learning rate " << std::fixed << rate;
-    std::cout << std::endl;
+    cout << "error " << fixed << error / data.size();
+    cout << " :: ";
+    cout << "learning rate " << fixed << rate;
+    cout << endl;
     rate *= anneal;
   }
   auto model = tinn.save();

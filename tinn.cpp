@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <fstream>
 #include "tinn.hpp"
 

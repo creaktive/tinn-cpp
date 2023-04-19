@@ -53,13 +53,13 @@ class Tinn {
     }
 
     // Prints an array of floats. Useful for printing predictions.
-    const std::string dump_vector(const std::vector<double> data, const std::streamsize prec = 6, const char sep = ' ') {
+    const std::string dump_vector(const std::vector<double> data, const std::string sep = " ", const std::streamsize prec = 6) {
       std::stringstream stream;
       stream.setf(std::ios::fixed);
       stream.precision(prec);
       size_t end = data.size() - 1;
       for (size_t i = 0; i <= end; i++)
-        stream << data[i] << (i == end ? '\n' : sep);
+        stream << data[i] << (i == end ? "" : sep);
       return stream.str();
     }
 

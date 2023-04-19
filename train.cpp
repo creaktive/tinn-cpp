@@ -16,16 +16,15 @@ const vector<Data> build(const string filename, const size_t nips, const size_t 
   if (!input.is_open())
     throw runtime_error("can't open " + filename);
   vector<Data> data;
-  string line;
-  while (getline(input, line)) {
+  for (string line; getline(input, line);) {
     stringstream stream;
     stream << line;
     Data row;
     double val;
-    for (size_t col = 0; stream >> val; col++)
-      if (col < nips)
+    for (size_t i = 0; stream >> val; i++)
+      if (i < nips)
         row.in.push_back(val);
-      else if (col < nips + nops)
+      else if (i < nips + nops)
         row.tg.push_back(val);
     if (row.in.size() != nips || row.tg.size() != nops)
       throw runtime_error("malformed input");
@@ -58,17 +57,21 @@ int main() {
     double error = 0.0;
     for (size_t j = 0; j < data.size(); j++)
       error += tinn.train(data[j].in, data[j].tg, rate);
-    cout << "error " << fixed << error / data.size();
-    cout << " :: ";
-    cout << "learning rate " << fixed << rate;
-    cout << endl;
+    cerr << "error " << fixed << error / data.size();
+    cerr << " :: ";
+    cerr << "learning rate " << fixed << rate;
+    cerr << endl;
     rate *= anneal;
   }
   // This is how you save the neural network.
   auto model = tinn.save();
+  cout << "#define NIPS " << nips << endl;
+  cout << "#define NHID " << nhid << endl;
+  cout << "#define NOPS " << nops << endl;
+  cout << "#define MODEL {" << tinn.dump_vector(model, ",") << "}" << endl;
   // This is how you load the neural network.
   tinn = Tinn(nips, nhid, nops, model);
-  // Now we do a prediction with the neural network we loaded from disk.
+  // Now we do a prediction with the neural network we loaded.
   // Ideally, we would also load a testing set to make the prediction with,
   // but for the sake of brevity here we just reuse the training set from earlier.
   // One data set is picked at random (zero index of input and target arrays is enough
@@ -77,8 +80,8 @@ int main() {
   auto tg = data[0].tg;
   auto pd = tinn.predict(in);
   // Prints target.
-  cout << tinn.dump_vector(tg);
+  cerr << tinn.dump_vector(tg) << endl;
   // Prints prediction.
-  cout << tinn.dump_vector(pd);
+  cerr << tinn.dump_vector(pd) << endl;
   return 0;
 }

@@ -37,19 +37,19 @@ const vector<Data> build(const string filename, const size_t nips, const size_t 
 int main() {
   // Input and output size is hard coded here as machine learning
   // repositories usually don't include the input and output size in the data itself.
-  const size_t nips = 256;
-  const size_t nops = 10;
+  const size_t nips = 100;
+  const size_t nops = 88;
   // Hyper Parameters.
   // Learning rate is annealed and thus not constant.
   // It can be fine tuned along with the number of hidden layers.
   // Feel free to modify the anneal rate.
   // The number of iterations can be changed for stronger training.
   tinn_num rate = 1.0;
-  const size_t nhid = 28;
+  const size_t nhid = 94;
   const tinn_num anneal = 0.99;
   const size_t iterations = 128;
   // Load the training set.
-  auto data = build("semeion.data", nips, nops);
+  auto data = build("../pianolizer/scales.dat", nips, nops);
   // Train, baby, train.
   auto tinn = Tinn(nips, nhid, nops);
   for (size_t i = 0; i < iterations; i++) {

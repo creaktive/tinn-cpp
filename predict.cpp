@@ -7,8 +7,8 @@
 using namespace std;
 
 struct Data {
-  vector<double> in;
-  vector<double> pd;
+  vector<tinn_num> in;
+  vector<tinn_num> pd;
 };
 
 int main() {
@@ -33,7 +33,7 @@ int main() {
   for (auto row : data) {
     for (size_t i = 0; i < NIPS; i++)
       printf("%d ", static_cast<unsigned char>(255 * row.in[i]));
-    double h = 0.0;
+    tinn_num h = 0.0;
     for (size_t i = 0; i < NOPS; i++)
       if (h < row.pd[i])
         h = row.pd[i];

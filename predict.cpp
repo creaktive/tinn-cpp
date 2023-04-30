@@ -12,9 +12,9 @@ int main() {
   for (string line; getline(cin, line);) {
     stringstream stream;
     stream << line;
-    vector<double> in;
+    vector<tinn_num> in;
     for (size_t i = 0; i < NIPS; i++) {
-      double val;
+      tinn_num val;
       stream >> val;
       in.push_back(val);
     }

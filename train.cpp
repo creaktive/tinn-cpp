@@ -7,8 +7,8 @@
 using namespace std;
 
 struct Data {
-  vector<double> in;
-  vector<double> tg;
+  vector<tinn_num> in;
+  vector<tinn_num> tg;
 };
 
 const vector<Data> build(const string filename, const size_t nips, const size_t nops) {
@@ -20,7 +20,7 @@ const vector<Data> build(const string filename, const size_t nips, const size_t 
     stringstream stream;
     stream << line;
     Data row;
-    double val;
+    tinn_num val;
     for (size_t i = 0; stream >> val; i++)
       if (i < nips)
         row.in.push_back(val);
@@ -44,9 +44,9 @@ int main() {
   // It can be fine tuned along with the number of hidden layers.
   // Feel free to modify the anneal rate.
   // The number of iterations can be changed for stronger training.
-  double rate = 1.0;
+  tinn_num rate = 1.0;
   const size_t nhid = 28;
-  const double anneal = 0.99;
+  const tinn_num anneal = 0.99;
   const size_t iterations = 128;
   // Load the training set.
   auto data = build("semeion.data", nips, nops);
@@ -54,7 +54,7 @@ int main() {
   auto tinn = Tinn(nips, nhid, nops);
   for (size_t i = 0; i < iterations; i++) {
     shuffle(data.begin(), data.end(), tinn.rng);
-    double error = 0.0;
+    tinn_num error = 0.0;
     for (size_t j = 0; j < data.size(); j++)
       error += tinn.train(data[j].in, data[j].tg, rate);
     cerr << "error " << fixed << error / data.size();
